@@ -9,6 +9,8 @@ on:
 jobs:
   update-gist:
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
     steps:
       - name: Update gist
         uses: maxam2017/productive-box@master
@@ -16,3 +18,9 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GIST_ID: a4853eade776dc14983f778369e54b3c
           TIMEZONE: Asia/Seoul
+      # Re-enabling resets GitHub's 60-day inactivity timer for scheduled workflows
+      - name: Keepalive
+        if: always()
+        run: gh api -X PUT repos/${{ github.repository }}/actions/workflows/schedule.yml/enable
+        env:
+          GH_TOKEN: ${{ github.token }}
